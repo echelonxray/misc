@@ -80,7 +80,7 @@ cd "$LIBC_SOURCE_DIR"
 rm -rf ./build1
 mkdir ./build1
 cd ./build1
-./../configure --host=$TGT2 --build=$HOST --prefix="$SYSROOT/tools/usr" --disable-wrapper --disable-shared CROSS_COMPILE=$TGT1- CFLAGS="-march=$MARCH -mabi=$MABI -O3 -pipe -fPIC"
+./../configure --host=$TGT2 --build=$HOST --prefix="$SYSROOT/tools/usr" --disable-wrapper --disable-shared CROSS_COMPILE=$TGT1- CFLAGS="-march=$MARCH -mabi=$MABI -O3 -pipe -fpic -g"
 make -j$(nproc) all
 CODE=$?
 if [ $CODE -ne 0 ]; then
