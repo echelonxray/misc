@@ -4,6 +4,7 @@
 
 MARCH=rv32ia
 MABI=ilp32
+TGTNAME=$MARCH
 
 SYSROOT="/home/quantum/devel/prefixes/try_musl_0"
 
@@ -15,12 +16,15 @@ GMP_SOURCE_DIR="/home/quantum/devel/gmp/gmp"
 LINUX_SOURCE_DIR="/home/quantum/devel/git/linux"
 LIBC_SOURCE_DIR="/home/quantum/devel/git/musl"
 
-TGT1=riscv32-rv32ia1-elf
-#TGT1=riscv32-rv32ia1-linux-musl
-TGT2=riscv32-rv32ia2-linux-musl
-TGT3=riscv32-rv32ia3-linux-musl
+TGT1=riscv32-"$TGTNAME"s1-elf
+TGT2=riscv32-"$TGTNAME"s2-linux-musl
+TGT3=riscv32-"$TGTNAME"-linux-musl
 
 HOST=x86_64-pc-linux-gnu
+
+echo "TGT1: $TGT1"
+echo "TGT2: $TGT2"
+echo "TGT3: $TGT3"
 
 # End: Configuration
 
