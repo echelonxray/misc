@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# cats: Takes a list of files on stdin and prints the contents of each
+#       to stdout.
+#
+#       Optionally, a header with the name of the file in
+#       square brackets and an empty (just a new line) footer can be
+#       printed around each files contents.
+#
+#       The input file list should new line delimited.
+#
+# Param 1: Should we add a header and footer for each file printed?
+#          Set to "true" if so.  Otherwise, we only print the contents.
+# Param 2: Prefix to add to file name.  Useful if the names don't match
+#          the current working directory.
+
+# If no prefix is set.  Use "." to be relative to the current working
+# directory.
+if [ -z ${2+x} ]; then
+	2="."
+fi
+
+# Iterate through the file names and print the files.
+while read filename; do
+	if [[ ! -z "$filename" ]]; then
+		if [[ ${filename:0:1} != '#' ]]; then
+			if [[ "$1" == "true" ]]; then
+				echo "[$2/$filename]"
+			fi
+			cat "$2/$filename"
+			if [[ "$1" == "true" ]]; then
+				echo
+			fi
+		fi
+	fi
+done
