@@ -2,23 +2,25 @@
 
 # Start: Configuration
 
-MARCH=armv7e-m+fp
+MARCH=armv7e-m
 MABI=aapcs
-TGTNAME=rmprofile
+MFPU=fpv4-sp-d16
+MFLOATABI=hard
+TGTNAME=max32690
 
-SYSROOT="/home/quantum/devel/prefixes/arm_max32690"
+SYSROOT="/home/echelon/devel/prefixes/arm_max32690"
 
-BINUTILS_SOURCE_DIR="/home/quantum/devel/git/binutils-gdb"
-GCC_SOURCE_DIR="/home/quantum/devel/git/gcc"
-MPC_SOURCE_DIR="/home/quantum/devel/mpc/mpc"
-MPFR_SOURCE_DIR="/home/quantum/devel/mpfr/mpfr"
-GMP_SOURCE_DIR="/home/quantum/devel/gmp/gmp"
-LINUX_SOURCE_DIR="/home/quantum/devel/git/linux"
-LIBC_SOURCE_DIR="/home/quantum/devel/git/musl"
+BINUTILS_SOURCE_DIR="/home/echelon/devel/git/binutils-gdb"
+GCC_SOURCE_DIR="/home/echelon/devel/git/gcc"
+MPC_SOURCE_DIR="/home/echelon/devel/mpc/mpc"
+MPFR_SOURCE_DIR="/home/echelon/devel/mpfr/mpfr"
+GMP_SOURCE_DIR="/home/echelon/devel/gmp/gmp"
+LINUX_SOURCE_DIR="/home/echelon/devel/git/linux/linux-echelon"
+LIBC_SOURCE_DIR="/home/echelon/devel/git/musl"
 
-TGT1=arm-"$TGTNAME"s1-elf
-TGT2=arm-"$TGTNAME"s2-linux-musl
-TGT3=arm-"$TGTNAME"-linux-musl
+TGT1=arm-"$TGTNAME"s1-eabi
+TGT2=arm-"$TGTNAME"s2-linux-musleabihf
+TGT3=arm-"$TGTNAME"-linux-musleabihf
 
 HOST=x86_64-pc-linux-gnu
 
@@ -66,7 +68,7 @@ cd "$GCC_SOURCE_DIR"
 rm -rf ./build1
 mkdir ./build1
 cd ./build1
-./../configure --target=$TGT1 --host=$HOST --prefix="$SYSROOT/tools/usr" --with-sysroot="$SYSROOT/tools" --with-mpc="$MPC_SOURCE_DIR" --with-mpfr="$MPFR_SOURCE_DIR" --with-gmp="$GMP_SOURCE_DIR" --with-newlib --without-headers --enable-initfini-array --disable-nls --disable-decimal-float --disable-threads --disable-libatomic --disable-libgomp --disable-libquadmath --disable-libssp --disable-libvtv --disable-libstdcxx --enable-languages=c,c++ --with-multilib-list=rmprofile
+./../configure --target=$TGT1 --host=$HOST --prefix="$SYSROOT/tools/usr" --with-sysroot="$SYSROOT/tools" --with-mpc="$MPC_SOURCE_DIR" --with-mpfr="$MPFR_SOURCE_DIR" --with-gmp="$GMP_SOURCE_DIR" --with-newlib --without-headers --enable-initfini-array --disable-nls --disable-decimal-float --disable-threads --disable-libatomic --disable-libgomp --disable-libquadmath --disable-libssp --disable-libvtv --disable-libstdcxx --enable-languages=c,c++ --with-multilib-list=rmprofile --disable-softfloat
 make -j$(nproc) all
 CODE=$?
 if [ $CODE -ne 0 ]; then
@@ -84,7 +86,7 @@ cd "$LIBC_SOURCE_DIR"
 rm -rf ./build1
 mkdir ./build1
 cd ./build1
-./../configure --host=$TGT2 --build=$HOST --prefix="$SYSROOT/tools/usr" --disable-wrapper --disable-shared CROSS_COMPILE=$TGT1- CFLAGS="-march=$MARCH -mabi=$MABI -O3 -pipe -fpic -g"
+./../configure --host=$TGT2 --build=$HOST --prefix="$SYSROOT/tools/usr" --disable-wrapper --disable-shared CROSS_COMPILE=$TGT1- CFLAGS="-march=$MARCH -mabi=$MABI -mfpu=$MFPU -mfloat-abi=$MFLOATABI -O3 -pipe -fpic -g"
 make -j$(nproc) all
 CODE=$?
 if [ $CODE -ne 0 ]; then
@@ -112,7 +114,7 @@ cd "$GCC_SOURCE_DIR"
 rm -rf ./build2
 mkdir ./build2
 cd ./build2
-./../configure --target=$TGT2 --host=$HOST --prefix="$SYSROOT/tools/usr" --with-sysroot="$SYSROOT/tools" --with-mpc="$MPC_SOURCE_DIR" --with-mpfr="$MPFR_SOURCE_DIR" --with-gmp="$GMP_SOURCE_DIR" --enable-languages=c,c++ --disable-libstdcxx --with-multilib-list=rmprofile --enable-default-pie
+./../configure --target=$TGT2 --host=$HOST --prefix="$SYSROOT/tools/usr" --with-sysroot="$SYSROOT/tools" --with-mpc="$MPC_SOURCE_DIR" --with-mpfr="$MPFR_SOURCE_DIR" --with-gmp="$GMP_SOURCE_DIR" --enable-languages=c,c++ --disable-libstdcxx --disable-libgomp --disable-multilib --enable-default-pie --with-arch=$MARCH --with-abi=$MABI --with-fpu=$MFPU --disable-softfloat
 make -j$(nproc) all
 CODE=$?
 if [ $CODE -ne 0 ]; then
@@ -130,7 +132,7 @@ cd "$LIBC_SOURCE_DIR"
 rm -rf ./build2
 mkdir ./build2
 cd ./build2
-./../configure --host=$TGT3 --build=$HOST --prefix="$SYSROOT/usr" --disable-wrapper CROSS_COMPILE=$TGT2- CFLAGS="-march=$MARCH -mabi=$MABI -O3 -pipe -fpic -g"
+./../configure --host=$TGT3 --build=$HOST --prefix="$SYSROOT/usr" --disable-wrapper CROSS_COMPILE=$TGT2- CFLAGS="-march=$MARCH -mabi=$MABI -mfpu=$MFPU -mfloat-abi=$MFLOATABI -O3 -pipe -fpic -g"
 make -j$(nproc) all
 CODE=$?
 if [ $CODE -ne 0 ]; then
@@ -158,7 +160,7 @@ cd "$GCC_SOURCE_DIR"
 rm -rf ./build3
 mkdir ./build3
 cd ./build3
-./../configure --target=$TGT3 --host=$HOST --prefix="$SYSROOT/usr" --with-sysroot="$SYSROOT" --with-mpc="$MPC_SOURCE_DIR" --with-mpfr="$MPFR_SOURCE_DIR" --with-gmp="$GMP_SOURCE_DIR" --with-multilib-list=rmprofile --enable-languages=c,c++ --enable-default-pie
+./../configure --target=$TGT3 --host=$HOST --prefix="$SYSROOT/usr" --with-sysroot="$SYSROOT" --with-mpc="$MPC_SOURCE_DIR" --with-mpfr="$MPFR_SOURCE_DIR" --with-gmp="$GMP_SOURCE_DIR" --enable-languages=c,c++ --enable-default-pie --disable-libsanitizer --disable-multilib --with-arch=$MARCH --with-abi=$MABI --with-fpu=$MFPU --disable-softfloat --disable-libstdcxx --disable-libgomp
 make -j$(nproc) all
 CODE=$?
 if [ $CODE -ne 0 ]; then
