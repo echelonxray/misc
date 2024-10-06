@@ -4,10 +4,9 @@
 #include <string.h>
 #include <poll.h>
 
-int main(void) {
+int main(int argc, char* argv[]) {
 	Display *d;
 	Window w;
-	XEvent e;
 	GC g;
 	int s;
 
