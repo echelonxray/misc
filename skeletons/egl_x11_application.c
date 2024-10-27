@@ -1,5 +1,5 @@
 /*
- * Build with: gcc ./x11_application.c -o ./x11_application.out -lX11
+ * Build with: gcc ./egl_x11_application.c -o ./egl_x11_application.out -lX11 -lEGL
  */
 
 #include <X11/Xlib.h>
@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <poll.h>
+#include <EGL/egl.h>
 
 int main(int argc, char* argv[]) {
 	Display *d;
@@ -14,9 +15,26 @@ int main(int argc, char* argv[]) {
 	GC g;
 	int s;
 
+	EGLBoolean retv;
+	EGLDisplay ed;
+	EGLint edmajor;
+	EGLint edminor;
+
 	d = XOpenDisplay(NULL);
 	if (d == NULL) {
 		fprintf(stderr, "Cannot open display\n");
+		exit(1);
+	}
+	ed = eglGetDisplay(d);
+	if (ed == EGL_NO_DISPLAY) {
+		fprintf(stderr, "Cannot open EGL display\n");
+		XCloseDisplay(d);
+		exit(1);
+	}
+	retv = eglInitialize(ed, &edmajor, &edminor);
+	if (retv == EGL_FALSE) {
+		fprintf(stderr, "Cannot init EGL display\n");
+		XCloseDisplay(d);
 		exit(1);
 	}
 
@@ -107,6 +125,7 @@ int main(int argc, char* argv[]) {
 	XFreeGC(d, g);
 	XUnmapWindow(d, w);
 	XDestroyWindow(d, w);
+	eglTerminate(ed);
 	XCloseDisplay(d);
 
 	return 0;
